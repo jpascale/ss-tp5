@@ -13,8 +13,8 @@ public class Particle {
     private double x_speed;
     private double y_speed;
 
-    private double x_force;
-    private double y_force;
+    private double n_force;
+    private double t_force;
 
     private double radius;
     private double mass;
@@ -27,6 +27,33 @@ public class Particle {
         this.y_pos = y;
         this.x_speed = x_speed;
         this.y_speed = y_speed;
+    }
+
+    /**
+     * Updates the normal and tangent force in this particle with regards to the particle p
+     * @param p the other particle
+     */
+    public void updateForce(Particle p, double kn, double kt){
+        double e = p.getRadius() + getRadius() - getDistance(p);
+        if (e > 0){
+            double relativeSpeedX = this.x_speed - p.getXSpeed();
+            double relativeSpeedY = this.y_speed - p.getXSpeed();
+
+            double enx = (p.getX() - this.x_pos) / getDistance(p);
+            double eny = (p.getY() - this.y_pos) / getDistance(p);
+
+            double etx = - eny;
+            double ety = enx;
+
+
+            this.n_force = - kn * e;
+            //this.t_force = - kt * e;
+        }
+
+    }
+
+    public double getDistance(Particle p){
+        return Math.sqrt(Math.pow(p.getX() - this.getX(), 2) + Math.pow(p.getY() - this.getY(), 2));
     }
 
     public double getX() {
@@ -61,20 +88,12 @@ public class Particle {
         this.y_speed = y_speed;
     }
 
-    public double getXForce() {
-        return x_force;
+    public double getTForce() {
+        return t_force;
     }
 
-    public void setXForce(double x_force) {
-        this.x_force = x_force;
-    }
-
-    public double getYForce() {
-        return y_force;
-    }
-
-    public void setYForce(double y_force) {
-        this.y_force = y_force;
+    public double getNForce() {
+        return n_force;
     }
 
     public double getMass() {
@@ -89,20 +108,6 @@ public class Particle {
         return id;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Particle particle = (Particle) o;
-
-        return id == particle.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return (int) (id ^ (id >>> 32));
-    }
 
     public static ArrayList<Particle> generate(long time, double width, double length, double mass, double D) {
         ArrayList<Particle> particles = new ArrayList<>();
@@ -141,4 +146,20 @@ public class Particle {
         }
         return true;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Particle particle = (Particle) o;
+
+        return id == particle.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
 }
