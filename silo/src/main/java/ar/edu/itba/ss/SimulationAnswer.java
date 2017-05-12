@@ -23,9 +23,9 @@ public class SimulationAnswer {
     private ArrayList<Particle> addBorderParticles() {
         ArrayList<Particle> particles = new ArrayList<>();
         particles.add(new Particle(0, 0.005, 0, 0, 0, 0, 0));
-        particles.add(new Particle(0, 0.005, 0, 0, SiloData.W, 0, 0));
-        particles.add(new Particle(0, 0.005, SiloData.L, 0, 0, 0, 0));
-        particles.add(new Particle(0, 0.005, SiloData.L, SiloData.W, 0, 0, 0));
+        particles.add(new Particle(0, 0.005, 0, SiloData.W, 0, 0, 0));
+        particles.add(new Particle(0, 0.005, 0, 0, SiloData.L, 0, 0));
+        particles.add(new Particle(0, 0.005, 0, SiloData.W, SiloData.L, 0, 0));
         return particles;
     }
 

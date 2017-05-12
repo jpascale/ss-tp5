@@ -1,6 +1,8 @@
 package ar.edu.itba.ss;
 
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,7 +37,7 @@ public class Particle {
 
     void initializeForce() {
         x_force = 0.0;
-        y_force = - getMass() * SiloData.G;
+        y_force = getMass() * SiloData.G;
     }
 
     /**
@@ -72,32 +74,45 @@ public class Particle {
     //TODO: HAY QUE VER EL ENX Y ENY EN LOS CASOS PORQUE AHORA ESTA HECHO CUANDO ES DERECHA LA COLISIÓN
     void updateForce(){
         double e;
+        double enx,eny;
 
         //LEFT WALL
         e = this.getX() - this.getRadius();
+
         if(e < 0 && this.getY() + this.getRadius() < SiloData.L){
-            updateForce(this.getXSpeed(), this.getYSpeed(), -1, 0, e);
+            enx = -1;
+            eny = 0;
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
 
         }
 
         //RIGHT WALL
         e = this.getX() + this.getRadius() - SiloData.W;
+
         if(e > 0 && this.getY() + this.getRadius() < SiloData.L){
-            updateForce(this.getXSpeed(), this.getYSpeed(), 1, 0, e);
+            enx = 1;
+            eny = 0;
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
         }
 
         //TOP WALL
         e = this.getY() - this.getRadius();
-        if(e < 0){
-            updateForce(this.getXSpeed(), this.getYSpeed(), 0, 1, e);
+
+        if(e < 0 ){
+            enx = 0;
+            eny = -1;
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
 
         }
 
         //BOTTOM WALL
         e = this.getY() + this.getRadius() - SiloData.L;
-        if(e > 0){
+
+        if(getY() + getRadius() > SiloData.L){
             if(!isGap()){
-                updateForce(this.getXSpeed(), this.getYSpeed(), 0, -1, e);
+                enx = 0;
+                eny = 1;
+                updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
 
             }
         }
