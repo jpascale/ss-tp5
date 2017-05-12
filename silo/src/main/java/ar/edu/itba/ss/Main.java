@@ -12,9 +12,9 @@ public class Main {
     private static double mass = 0.01;
 
     private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn);
-    private static double dt2 = 100 * dt;
+    private static double dt2 = 10000 * dt;
 
-    private static long runningTime = 10;
+    private static long runningTime = 1000;
     private static long generationTime = 5;
 
 
@@ -25,8 +25,8 @@ public class Main {
         double printTime = 0.0;
         particles = new ArrayList<>();
 
-        Particle p1 = new Particle(0, SiloData.D / 5.0, mass, 0.5, 0.5, 0,0);
-        Particle p2 = new Particle(1, SiloData.D / 5.0, mass, SiloData.L/2, 0.1, 0,0);
+        Particle p1 = new Particle(0, 0.03, mass, 0.5, 0.5, 40,0);
+        Particle p2 = new Particle(1, 0.03, mass, SiloData.L/2, 0.1, 0,0);
         particles.add(p1);
 
         sa.writeAnswer(particles, 0);

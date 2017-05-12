@@ -35,7 +35,7 @@ public class Particle {
 
     void initializeForce() {
         x_force = 0.0;
-        y_force = getMass() * SiloData.G;
+        y_force = - getMass() * SiloData.G;
     }
 
     /**
@@ -69,34 +69,35 @@ public class Particle {
     /**
      * Updates the normal and tangent force in this particle with regards to the walls
      */
+    //TODO: HAY QUE VER EL ENX Y ENY EN LOS CASOS PORQUE AHORA ESTA HECHO CUANDO ES DERECHA LA COLISIÓN
     void updateForce(){
         double e;
 
         //LEFT WALL
         e = this.getX() - this.getRadius();
-        if(e < 0 && this.getY() + this.getRadius() > SiloData.L){
-            updateForce(this.getXSpeed(), this.getYSpeed(), 0, -1, e);
+        if(e < 0 && this.getY() + this.getRadius() < SiloData.L){
+            updateForce(this.getXSpeed(), this.getYSpeed(), -1, 0, e);
 
         }
 
         //RIGHT WALL
         e = this.getX() + this.getRadius() - SiloData.W;
-        if(e < 0 && this.getY() + this.getRadius() > SiloData.L){
-            updateForce(this.getXSpeed(), this.getYSpeed(), 0, 1, e);
+        if(e > 0 && this.getY() + this.getRadius() < SiloData.L){
+            updateForce(this.getXSpeed(), this.getYSpeed(), 1, 0, e);
         }
 
         //TOP WALL
         e = this.getY() - this.getRadius();
         if(e < 0){
-            updateForce(this.getXSpeed(), this.getYSpeed(), 1, 0, e);
+            updateForce(this.getXSpeed(), this.getYSpeed(), 0, 1, e);
 
         }
 
         //BOTTOM WALL
         e = this.getY() + this.getRadius() - SiloData.L;
-        if(e < 0){
+        if(e > 0){
             if(!isGap()){
-                updateForce(this.getXSpeed(), this.getYSpeed(), -1, 0, e);
+                updateForce(this.getXSpeed(), this.getYSpeed(), 0, -1, e);
 
             }
         }
@@ -207,7 +208,7 @@ public class Particle {
             do{
                 randomX = SiloData.W * rand.nextDouble();
                 randomY = SiloData.L * rand.nextDouble();
-                randomR = rand.nextDouble() * (SiloData.D / 5.0 - SiloData.D / 7.0) + SiloData.D / 7.0;
+                randomR = (rand.nextDouble() * (SiloData.D / 5.0 - SiloData.D / 7.0) + SiloData.D / 7.0) / 2.0;
             }while(!valid(randomX, randomY, particles, SiloData.W, SiloData.L, randomR));
             particles.add(new Particle(N, randomR, mass, randomX, randomY, 0.0, 0.0));
 
