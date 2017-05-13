@@ -1,7 +1,6 @@
 package ar.edu.itba.ss;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Main {
     private static SimulationAnswer sa = new SimulationAnswer();
@@ -17,6 +16,7 @@ public class Main {
     private static double runningTime = 10000 * dt;
     private static double generationTime = 0.1;
 
+    private static boolean WRITE_CINETIC = false;
 
     public static void main(String[] args) {
         particles = Particle.generate(generationTime, mass);
@@ -25,19 +25,25 @@ public class Main {
         System.out.println(N);
         double printTime = 0.0;
 
-        for(double t = 0; t < runningTime; t += dt){
-            System.out.println("ITERACIón" + (int)(t / dt));
+        for (double t = 0; t < runningTime; t += dt){
+            System.out.println("ITERACION " + (int)(t / dt));
             reinjectParticles();
-            if(printTime <= runningTime){
+            if (printTime <= runningTime){
                 sa.writeAnswer(particles, printTime);
                 printTime += dt2;
             }
 
             particles.forEach((p) -> calculateForce(p));
             updateParticles(dt);
+
+            if (WRITE_CINETIC)
+                sa.writeCinetic(t, getCineticEnergy(particles));
         }
 
         sa.printAnswer();
+
+        if (WRITE_CINETIC)
+            sa.printCinetic();
 
     }
 
@@ -118,5 +124,15 @@ public class Main {
 
         p.setXSpeed(newXSpeed);
         p.setYSpeed(newYSpeed);
+    }
+
+    private static double getCineticEnergy(ArrayList<Particle> particles){
+        double ec = 0;
+
+        for (Particle p: particles){
+            ec += 0.5 * p.getMass() * Math.sqrt(Math.pow(p.getXSpeed(), 2) + Math.pow(p.getYSpeed(), 2));
+        }
+
+        return ec;
     }
 }
