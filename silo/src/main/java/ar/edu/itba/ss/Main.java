@@ -16,7 +16,9 @@ public class Main {
     private static double runningTime = 10000 * dt;
     private static double generationTime = 0.1;
 
-    private static boolean WRITE_CINETIC = false;
+    private static boolean WRITE_EXTRAS = true;
+
+    private static long relocationCounter = 0;
 
     public static void main(String[] args) {
         particles = Particle.generate(generationTime, mass);
@@ -36,15 +38,18 @@ public class Main {
             particles.forEach((p) -> calculateForce(p));
             updateParticles(dt);
 
-            if (WRITE_CINETIC)
+            if (WRITE_EXTRAS) {
                 sa.writeCinetic(t, getCineticEnergy(particles));
+                sa.writeReloc(t, relocationCounter / t);
+            }
         }
 
         sa.printAnswer();
 
-        if (WRITE_CINETIC)
+        if (WRITE_EXTRAS) {
             sa.printCinetic();
-
+            sa.printReloc();
+        }
     }
 
 
@@ -66,6 +71,7 @@ public class Main {
                 p.setY(0);
                 p.setXSpeed(0);
                 p.setYSpeed(0);
+                relocationCounter += 1;
             }
         }
     }

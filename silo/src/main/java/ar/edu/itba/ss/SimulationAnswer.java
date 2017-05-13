@@ -7,6 +7,8 @@ import java.util.ArrayList;
 public class SimulationAnswer {
     StringBuilder sb = new StringBuilder();
     StringBuilder ec = new StringBuilder();
+    StringBuilder reloc = new StringBuilder();
+
 
     public void writeAnswer(ArrayList<Particle> particles, double t){
         ArrayList<Particle> borderParticle = addBorderParticles();
@@ -23,6 +25,10 @@ public class SimulationAnswer {
 
     public void writeCinetic(double t, double e){
         ec.append(t).append('\t').append(e).append('\n');
+    }
+
+    public void writeReloc(double t, double r){
+        reloc.append(t).append('\t').append(r).append('\n');
     }
 
     private ArrayList<Particle> addBorderParticles() {
@@ -48,6 +54,16 @@ public class SimulationAnswer {
     public void printCinetic(){
         try {
             FileWriter fw = new FileWriter("ec.txt", true);
+            fw.write(sb.toString());
+            fw.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void printReloc(){
+        try {
+            FileWriter fw = new FileWriter("reloc.txt", true);
             fw.write(sb.toString());
             fw.close();
         } catch (IOException e){
