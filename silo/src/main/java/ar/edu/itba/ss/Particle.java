@@ -48,7 +48,7 @@ public class Particle {
         double e = p.getRadius() + getRadius() - getDistance(p);
         if (e > 0){
             double relativeSpeedX = this.x_speed - p.getXSpeed();
-            double relativeSpeedY = this.y_speed - p.getXSpeed();
+            double relativeSpeedY = this.y_speed - p.getYSpeed();
 
             double enx = (p.getX() - this.x_pos) / getDistance(p);
             double eny = (p.getY() - this.y_pos) / getDistance(p);
