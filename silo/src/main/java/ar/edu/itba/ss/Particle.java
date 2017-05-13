@@ -45,15 +45,15 @@ public class Particle {
      * @param p the other particle
      */
     void updateForce(Particle p){
-        double e = p.getRadius() + getRadius() - getDistance(p);
+        double e = p.getRadius() + this.getRadius() - getDistance(p);
         if (e > 0){
-            double relativeSpeedX = this.x_speed - p.getXSpeed();
-            double relativeSpeedY = this.y_speed - p.getYSpeed();
+            double rsx = this.getXSpeed() - p.getXSpeed();
+            double rsy = this.getYSpeed() - p.getYSpeed();
 
-            double enx = (p.getX() - this.x_pos) / getDistance(p);
-            double eny = (p.getY() - this.y_pos) / getDistance(p);
+            double enx = (p.getX() - this.getX()) / getDistance(p);
+            double eny = (p.getY() - this.getY()) / getDistance(p);
 
-            updateForce(relativeSpeedX, relativeSpeedY, enx, eny, e);
+            updateForce(rsx, rsy, enx, eny, e);
         }
 
     }
@@ -71,24 +71,20 @@ public class Particle {
     /**
      * Updates the normal and tangent force in this particle with regards to the walls
      */
-    //TODO: HAY QUE VER EL ENX Y ENY EN LOS CASOS PORQUE AHORA ESTA HECHO CUANDO ES DERECHA LA COLISIÓN
     void updateForce(){
         double e;
         double enx,eny;
 
         //LEFT WALL
         e = this.getX() - this.getRadius();
-
         if(e < 0 && this.getY() + this.getRadius() < SiloData.L){
             enx = -1;
             eny = 0;
-            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
-
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, -1 * e);
         }
 
         //RIGHT WALL
         e = this.getX() + this.getRadius() - SiloData.W;
-
         if(e > 0 && this.getY() + this.getRadius() < SiloData.L){
             enx = 1;
             eny = 0;
@@ -97,11 +93,10 @@ public class Particle {
 
         //TOP WALL
         e = this.getY() - this.getRadius();
-
         if(e < 0 ){
             enx = 0;
             eny = -1;
-            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, -1 * e);
 
         }
 
