@@ -204,13 +204,13 @@ public class Particle {
         return id;
     }
 
-    public static ArrayList<Particle> generate(long time, double mass) {
+    public static ArrayList<Particle> generate(double time, double mass) {
         ArrayList<Particle> particles = new ArrayList<>();
         Random rand = new Random();
 
         int N = 0;
         long startingTime = System.currentTimeMillis();
-        long runningTime = time * 1000;
+        double runningTime = time * 1000;
 
         double randomX, randomY, randomR;
 

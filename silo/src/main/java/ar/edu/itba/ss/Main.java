@@ -12,26 +12,21 @@ public class Main {
     private static double mass = 0.01;
 
     private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn);
-    private static double dt2 = 10000 * dt;
+    private static double dt2 = 10 * dt;
 
-    private static long runningTime = 1000;
-    private static long generationTime = 5;
+    private static double runningTime = 10000 * dt;
+    private static double generationTime = 0.1;
 
 
     public static void main(String[] args) {
-//        particles = Particle.generate(generationTime, mass);
-//        N = particles.size();
+        particles = Particle.generate(generationTime, mass);
+        N = particles.size();
 
+        System.out.println(N);
         double printTime = 0.0;
-        particles = new ArrayList<>();
-
-        Particle p1 = new Particle(0, 0.03, mass, 0.5, 0.5, 40,0);
-        Particle p2 = new Particle(1, 0.03, mass, SiloData.L/2, 0.1, 0,0);
-        particles.add(p1);
-
-        sa.writeAnswer(particles, 0);
 
         for(double t = 0; t < runningTime; t += dt){
+            System.out.println("ITERACIón" + (int)(t / dt));
             reinjectParticles();
             if(printTime <= runningTime){
                 sa.writeAnswer(particles, printTime);
