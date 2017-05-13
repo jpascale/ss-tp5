@@ -1,6 +1,8 @@
 package ar.edu.itba.ss;
 
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,7 +37,7 @@ public class Particle {
 
     void initializeForce() {
         x_force = 0.0;
-        y_force = - getMass() * SiloData.G;
+        y_force = getMass() * SiloData.G;
     }
 
     /**
@@ -51,91 +53,67 @@ public class Particle {
             double enx = (p.getX() - this.x_pos) / getDistance(p);
             double eny = (p.getY() - this.y_pos) / getDistance(p);
 
-            double [] force = updateForce(relativeSpeedX, relativeSpeedY, enx, eny, e);
-
-            this.x_force += force[0];
-            this.y_force += force[1];
+            updateForce(relativeSpeedX, relativeSpeedY, enx, eny, e);
         }
 
     }
 
-    private double[] updateForce(double rsx, double rsy, double enx, double eny, double e){
+    private void updateForce(double rsx, double rsy, double enx, double eny, double e){
         double relativeSpeedT = rsx * -eny + rsy * enx;
 
         double normalForce = - SiloData.kn * e;
         double tangentForce = - SiloData.kt * e * relativeSpeedT;
 
-        return new double[] { normalForce * enx + tangentForce * - eny, normalForce * eny + tangentForce * enx};
-    }
-    /*
-    private Point wallForce(VerletParticle p) {
-        Point sum = new Point(0, 0);
-        if (p.position.x - p.getRadius() < 0 && p.position.y > SiloRunner.fall) {
-            Point[] force = ForcesUtils.wallLeftForce(p);
-            sum.add(Point.sum(force[0], force[1]));
-            p.addPressure(force[0]);
-        }
-        if (p.position.x + p.getRadius() > SiloRunner.W && p.position.y > SiloRunner.fall) {
-            Point[] force = ForcesUtils.wallRightForce(p);
-            sum.add(Point.sum(force[0], force[1]));
-            p.addPressure(force[0]);
-        }
-        if (Math.abs(p.position.y - SiloRunner.fall) < p.getRadius()) {
-            if (inGap(p)) {
-                for (VerletParticle particle : vertexParticles) {
-                    Point[] forceComponents = p.getForce(particle);
-                    sum.add(Point.sum(forceComponents[0], forceComponents[1]));
-                    p.addPressure(forceComponents[0]);
-                }
-            } else {
-                Point[] force = ForcesUtils.wallBottomForce(p);
-                sum.add(Point.sum(force[0], force[1]));
-                p.addPressure(force[0]);
-            }
-        }
-        return sum;
+        this.x_force += normalForce * enx + tangentForce * - eny;
+        this.y_force += normalForce * eny + tangentForce * enx;
     }
 
     /**
      * Updates the normal and tangent force in this particle with regards to the walls
      */
+    //TODO: HAY QUE VER EL ENX Y ENY EN LOS CASOS PORQUE AHORA ESTA HECHO CUANDO ES DERECHA LA COLISIÓN
     void updateForce(){
         double e;
+        double enx,eny;
 
-        //RIGHT WALL
+        //LEFT WALL
         e = this.getX() - this.getRadius();
-        if(e < 0 && this.getY() + this.getRadius() > SiloData.L){
-            double [] force = updateForce(this.getXSpeed(), this.getYSpeed(), 1, 0, e);
-            this.x_force += force[0];
-            this.y_force += force[1];
+
+        if(e < 0 && this.getY() + this.getRadius() < SiloData.L){
+            enx = -1;
+            eny = 0;
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
 
         }
 
-        //LEFT WALL
+        //RIGHT WALL
         e = this.getX() + this.getRadius() - SiloData.W;
-        if(e < 0 && this.getY() + this.getRadius() > SiloData.L){
-            double [] force = updateForce(this.getXSpeed(), this.getYSpeed(), -1, 0, e);
-            this.x_force += force[0];
-            this.y_force += force[1];
+
+        if(e > 0 && this.getY() + this.getRadius() < SiloData.L){
+            enx = 1;
+            eny = 0;
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
         }
 
         //TOP WALL
         e = this.getY() - this.getRadius();
-        if(e < 0){
-            double [] force = updateForce(this.getXSpeed(), this.getYSpeed(), 0, 1, e);
-            this.x_force += force[0];
-            this.y_force += force[1];
+
+        if(e < 0 ){
+            enx = 0;
+            eny = -1;
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
+
         }
 
         //BOTTOM WALL
         e = this.getY() + this.getRadius() - SiloData.L;
-        if(e < 0){
+
+        if(getY() + getRadius() > SiloData.L){
             if(!isGap()){
-                double [] force = updateForce(this.getXSpeed(), this.getYSpeed(), 0, -1, e);
-                this.x_force += force[0];
-                this.y_force += force[1];
-            }else{
-                //TODO: WHAT TO DO HERE
+                enx = 0;
+                eny = 1;
+                updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
+
             }
         }
 
@@ -202,14 +180,6 @@ public class Particle {
         return y_force;
     }
 
-    void setXForce(double x_force) {
-        this.x_force = x_force;
-    }
-
-    void setYForce(double y_force) {
-        this.y_force = y_force;
-    }
-
     double getOldXForce() {
         return old_x_force;
     }
@@ -253,7 +223,7 @@ public class Particle {
             do{
                 randomX = SiloData.W * rand.nextDouble();
                 randomY = SiloData.L * rand.nextDouble();
-                randomR = rand.nextDouble() * (SiloData.D / 5.0 - SiloData.D / 7.0) + SiloData.D / 7.0;
+                randomR = (rand.nextDouble() * (SiloData.D / 5.0 - SiloData.D / 7.0) + SiloData.D / 7.0) / 2.0;
             }while(!valid(randomX, randomY, particles, SiloData.W, SiloData.L, randomR));
             particles.add(new Particle(N, randomR, mass, randomX, randomY, 0.0, 0.0));
 
