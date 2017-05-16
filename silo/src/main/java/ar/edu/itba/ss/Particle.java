@@ -1,8 +1,5 @@
 package ar.edu.itba.ss;
 
-
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -18,11 +15,11 @@ public class Particle {
     private double x_force;
     private double y_force;
 
-    private double old_x_force;
-    private double old_y_force;
-
     private double radius;
     private double mass;
+
+    private double old_x_force;
+    private double old_y_force;
 
     Particle(long id, double radius, double mass, double x, double y, double x_speed, double y_speed){
         this.id = id;
@@ -37,7 +34,7 @@ public class Particle {
 
     void initializeForce() {
         x_force = 0.0;
-        y_force = getMass() * SiloData.G;
+        y_force = -SiloData.G * mass;
     }
 
     /**

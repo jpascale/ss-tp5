@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class SimulationAnswer {
-    StringBuilder sb = new StringBuilder();
-    StringBuilder ec = new StringBuilder();
-    StringBuilder reloc = new StringBuilder();
+    private StringBuilder ec = new StringBuilder();
+    private StringBuilder reloc = new StringBuilder();
 
 
     public void writeAnswer(ArrayList<Particle> particles, double t){
+        StringBuilder sb = new StringBuilder();
         ArrayList<Particle> borderParticle = addBorderParticles();
-         sb.append("\t").append(particles.size() + borderParticle.size()).append("\n");
+        sb.append("\t").append(particles.size() + borderParticle.size()).append("\n");
         sb.append("\t").append(t).append("\n");
         for(Particle p : borderParticle){
             sb.append("\t").append(p.getX()).append("\t").append(p.getY()).append("\t").append(p.getRadius()).append("\n");
@@ -20,7 +20,13 @@ public class SimulationAnswer {
         for(Particle p: particles){
             sb.append("\t").append(p.getX()).append("\t").append(p.getY()).append("\t").append(p.getRadius()).append("\n");
         }
-
+        try {
+            FileWriter fw = new FileWriter("out.txt", true);
+            fw.write(sb.toString());
+            fw.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void writeCinetic(double t, double e){
@@ -40,21 +46,10 @@ public class SimulationAnswer {
         return particles;
     }
 
-    public void printAnswer(){
-        try {
-            FileWriter fw = new FileWriter("out.txt", true);
-            fw.write(sb.toString());
-            fw.close();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-
-    }
-
     public void printCinetic(){
         try {
             FileWriter fw = new FileWriter("ec.txt", true);
-            fw.write(sb.toString());
+            fw.write(ec.toString());
             fw.close();
         } catch (IOException e){
             e.printStackTrace();
@@ -64,7 +59,7 @@ public class SimulationAnswer {
     public void printReloc(){
         try {
             FileWriter fw = new FileWriter("reloc.txt", true);
-            fw.write(sb.toString());
+            fw.write(reloc.toString());
             fw.close();
         } catch (IOException e){
             e.printStackTrace();

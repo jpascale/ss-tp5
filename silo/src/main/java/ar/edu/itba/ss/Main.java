@@ -8,15 +8,15 @@ public class Main {
     private static ArrayList<Particle> particles;
     private static int N;
 
-    private static double mass = 0.01;
+    static double mass = 0.01;
 
     private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn);
-    private static double dt2 = 10 * dt;
+    private static double dt2 = 100 * dt;
 
-    private static double runningTime = 10000 * dt;
-    private static double generationTime = 0.1;
+    private static double runningTime = 1;
+    private static double generationTime = 0.02;
 
-    private static boolean WRITE_EXTRAS = true;
+    private static boolean WRITE_EXTRAS = false;
 
     private static long relocationCounter = 0;
 
@@ -25,17 +25,19 @@ public class Main {
         N = particles.size();
 
         System.out.println(N);
-        double printTime = 0.0;
+        double printCont = 0.0;
+
 
         for (double t = 0; t < runningTime; t += dt){
-            System.out.println("ITERACION " + (int)(t / dt));
+            System.out.println("QUEDA " + (int)((runningTime/dt) - (t/dt)));
             reinjectParticles();
-            if (printTime <= runningTime){
-                sa.writeAnswer(particles, printTime);
-                printTime += dt2;
+
+            if (dt2 * printCont <= t){
+                sa.writeAnswer(particles, dt2*printCont);
+                printCont ++;
             }
 
-            particles.forEach((p) -> calculateForce(p));
+            calculateForce();
             updateParticles(dt);
 
             if (WRITE_EXTRAS) {
@@ -44,8 +46,6 @@ public class Main {
             }
         }
 
-        sa.printAnswer();
-
         if (WRITE_EXTRAS) {
             sa.printCinetic();
             sa.printReloc();
@@ -53,21 +53,24 @@ public class Main {
     }
 
 
-    private static void calculateForce(Particle p){
-        p.initializeForce();
-        //Updates force with other particles
-        for (Particle p2 : particles){
-            if (!p.equals(p2)){
-                p.updateForce(p2);
+    private static void calculateForce(){
+        for(Particle p: particles){
+            p.initializeForce();
+            //Updates force with other particles
+            for (Particle p2 : particles){
+                if (!p.equals(p2)){
+                    p.updateForce(p2);
+                }
             }
+            //Updates force with the walls
+            p.updateForce();
         }
-        //Updates force with the walls
-        p.updateForce();
+
     }
 
     private static void reinjectParticles() {
         for (Particle p: particles){
-            if(p.getY() + p.getRadius() >= SiloData.L + (SiloData.L / 10)){
+            if(p.getY() + p.getRadius() >= (SiloData.L / 10)){
                 p.setY(0);
                 p.setXSpeed(0);
                 p.setYSpeed(0);
@@ -91,7 +94,7 @@ public class Main {
 
         //Como necesito la fuerza en delta(t + delta) la calculo para todas las particulas
         //Con las posiciones y velocidades cambiadas
-        particles.forEach((p) -> calculateForce(p));
+        calculateForce();
 
         //Corrijo las velocidades
         particles.forEach((p) -> correctVelocities(p, delta, oldParticles));
@@ -104,8 +107,8 @@ public class Main {
      * @param delta the delta time to advance
      */
     private static void predictVelocities(Particle p, double delta){
-        double newX = p.getX() + p.getXSpeed() * delta + (2.0 / 3.0) * (p.getXForce() / p.getMass()) * Math.pow(delta, 2) - (1.0 / 6.0) * (p.getOldXForce() / p.getMass()) * Math.pow(delta, 2);
-        double newY = p.getY() + p.getYSpeed() * delta + (2.0 / 3.0) * (p.getYForce() / p.getMass()) * Math.pow(delta, 2) - (1.0 / 6.0) * (p.getOldYForce() / p.getMass()) * Math.pow(delta, 2);
+        double newX = p.getX() + p.getXSpeed() * delta + (2.0 / 3.0) * (p.getXForce() / p.getMass()) * delta * delta - (1.0 / 6.0) * (p.getOldXForce() / p.getMass()) * delta * delta;
+        double newY = p.getY() + p.getYSpeed() * delta + (2.0 / 3.0) * (p.getYForce() / p.getMass()) * delta * delta - (1.0 / 6.0) * (p.getOldYForce() / p.getMass()) * delta * delta;
 
         p.setX(newX);
         p.setY(newY);
@@ -125,8 +128,8 @@ public class Main {
     private static void correctVelocities(Particle p, double delta, ArrayList<Particle> oldParticles){
          Particle old = oldParticles.get((int)p.getId());
 
-        double newXSpeed = p.getXSpeed() + (1.0 / 3.0) * (p.getXForce() / p.getMass()) * delta + (5.0 / 6.0) * (p.getOldXForce() / p.getMass()) * delta - (1.0 / 6.0) * (old.getOldXForce() / p.getMass()) * delta;
-        double newYSpeed = p.getYSpeed() + (1.0 / 3.0) * (p.getYForce() / p.getMass()) * delta + (5.0 / 6.0) * (p.getOldYForce() / p.getMass()) * delta - (1.0 / 6.0) * (old.getOldYForce() / p.getMass()) * delta;
+        double newXSpeed = old.getXSpeed() + (1.0 / 3.0) * (p.getXForce() / p.getMass()) * delta + (5.0 / 6.0) * (old.getXForce() / p.getMass()) * delta - (1.0 / 6.0) * (old.getOldXForce() / p.getMass()) * delta;
+        double newYSpeed = old.getYSpeed() + (1.0 / 3.0) * (p.getYForce() / p.getMass()) * delta + (5.0 / 6.0) * (old.getYForce() / p.getMass()) * delta - (1.0 / 6.0) * (old.getOldYForce() / p.getMass()) * delta;
 
         p.setXSpeed(newXSpeed);
         p.setYSpeed(newYSpeed);
