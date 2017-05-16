@@ -16,39 +16,38 @@ public class Main {
     private static double runningTime = 1.5;
     private static double generationTime = 0.03;
 
-    private static boolean WRITE_EXTRAS = true;
+    private static boolean WRITE_EXTRAS = false;
 
+    private static long relocationCounterDT = 0;
     private static long relocationCounter = 0;
 
     public static void main(String[] args) {
         particles = Particle.generate(generationTime, mass);
         N = particles.size();
 
-//        particles = new ArrayList<>();
-//        particles.add(new Particle(0, 0.1,mass, 0.2, SiloData.L /2, 0, 0));
-
         System.out.println(N);
         double printCont = 0.0;
 
 
         for (double t = 0; t < runningTime; t += dt){
-            System.out.println("QUEDA " + (int)((runningTime/dt) - (t/dt)));
             reinjectParticles();
 
             if (dt2 * printCont <= t){
+                System.out.println("QUEDA " + (int)((runningTime/dt) - (t/dt)));
                 sa.writeAnswer(particles, dt2*printCont);
                 if (WRITE_EXTRAS) {
-                    sa.writeCinetic(t, getCineticEnergy(particles));
-                    sa.writeReloc(t, relocationCounter / t);
+                    sa.writeCinetic(t, getKineticEnergy(particles));
+                    sa.writeReloc(t, relocationCounterDT / dt2);
                 }
-                relocationCounter = 0;
+                relocationCounterDT = 0;
                 printCont ++;
             }
-
 
             calculateForce();
             updateParticles(dt);
         }
+
+        System.out.println("CAUDAL GLOBAL: " + relocationCounter/runningTime);
     }
 
 
@@ -74,6 +73,7 @@ public class Main {
 //                p.setXSpeed(0);
 //                p.setYSpeed(0);
                 relocationCounter ++;
+                relocationCounterDT ++;
             }
         }
     }
@@ -108,7 +108,6 @@ public class Main {
         p.setX(newX);
         p.setY(newY);
 
-        //PredictV
         double predXSpeed = p.getXSpeed() + (3.0 / 2.0) * (p.getXForce() / p.getMass()) * delta
                 - (1.0/2.0) * (p.getOldXForce() / p.getMass()) * delta;
         double predYSpeed = p.getYSpeed() + (3.0 / 2.0) * (p.getYForce() / p.getMass()) * delta
@@ -134,13 +133,13 @@ public class Main {
         p.setYSpeed(newYSpeed);
     }
 
-    private static double getCineticEnergy(ArrayList<Particle> particles){
-        double ec = 0;
+    private static double getKineticEnergy(ArrayList<Particle> particles){
+        double ek = 0;
 
         for (Particle p: particles){
-            ec += 0.5 * p.getMass() * Math.sqrt(Math.pow(p.getXSpeed(), 2) + Math.pow(p.getYSpeed(), 2));
+            ek += 0.5 * p.getMass() * Math.sqrt(Math.pow(p.getXSpeed(), 2) + Math.pow(p.getYSpeed(), 2));
         }
 
-        return ec;
+        return ek;
     }
 }
