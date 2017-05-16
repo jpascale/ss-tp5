@@ -1,5 +1,7 @@
 package ar.edu.itba.ss;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -88,23 +90,13 @@ public class Particle {
             updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
         }
 
-        //TOP WALL
-        e = this.getY() - this.getRadius();
-        if(e < 0 ){
-            enx = 0;
-            eny = -1;
-            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, -1 * e);
-
-        }
-
         //BOTTOM WALL
-        e = this.getY() + this.getRadius() - SiloData.L;
-
-        if(getY() + getRadius() > SiloData.L){
+        e = this.getY() - this.getRadius();;
+        if(e < 0){
             if(!isGap()){
                 enx = 0;
-                eny = 1;
-                updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
+                eny = -1;
+                updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, -1 * e);
 
             }
         }
@@ -115,7 +107,7 @@ public class Particle {
      * @return if the particle is in the gap
      */
     private boolean isGap() {
-        return (this.getX() > (SiloData.L - SiloData.D) / 2) && (this.getX() < (SiloData.L + SiloData.D) / 2);
+        return (this.getX() > ((SiloData.W - SiloData.D) / 2) + this.getRadius()) && (this.getX() < ((SiloData.W + SiloData.D) / 2 - this.getRadius()));
     }
 
     public Particle clone(){

@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class SimulationAnswer {
-    private StringBuilder ec = new StringBuilder();
-    private StringBuilder reloc = new StringBuilder();
-
 
     public void writeAnswer(ArrayList<Particle> particles, double t){
         StringBuilder sb = new StringBuilder();
@@ -29,12 +26,30 @@ public class SimulationAnswer {
         }
     }
 
-    public void writeCinetic(double t, double e){
-        ec.append(t).append('\t').append(e).append('\n');
+    public void writeCinetic(double t, double k){
+        StringBuilder ec = new StringBuilder();
+        ec.append(t).append('\t').append(k).append('\n');
+
+        try {
+            FileWriter fw = new FileWriter("ec.txt", true);
+            fw.write(ec.toString());
+            fw.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void writeReloc(double t, double r){
+        StringBuilder reloc = new StringBuilder();
         reloc.append(t).append('\t').append(r).append('\n');
+
+        try {
+            FileWriter fw = new FileWriter("reloc.txt", true);
+            fw.write(reloc.toString());
+            fw.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private ArrayList<Particle> addBorderParticles() {
@@ -46,23 +61,4 @@ public class SimulationAnswer {
         return particles;
     }
 
-    public void printCinetic(){
-        try {
-            FileWriter fw = new FileWriter("ec.txt", true);
-            fw.write(ec.toString());
-            fw.close();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void printReloc(){
-        try {
-            FileWriter fw = new FileWriter("reloc.txt", true);
-            fw.write(reloc.toString());
-            fw.close();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-    }
 }
