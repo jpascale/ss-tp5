@@ -1,19 +1,19 @@
 package ar.edu.itba.ss;
 
+
 import java.util.ArrayList;
 
 public class Main {
     private static SimulationAnswer sa = new SimulationAnswer();
 
     private static ArrayList<Particle> particles;
-    private static int N;
 
-    static double mass = 0.01;
+    private static double mass = 0.01;
 
-    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn);
+    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 2;
     private static double dt2 = 100 * dt;
 
-    private static double runningTime = 1.5;
+    private static double runningTime = 1;
     private static double generationTime = 0.03;
 
     private static boolean WRITE_EXTRAS = false;
@@ -23,15 +23,11 @@ public class Main {
 
     public static void main(String[] args) {
         particles = Particle.generate(generationTime, mass);
-        N = particles.size();
 
-        System.out.println(N);
+        System.out.println(particles.size());
         double printCont = 0.0;
 
-
         for (double t = 0; t < runningTime; t += dt){
-            reinjectParticles();
-
             if (dt2 * printCont <= t){
                 System.out.println("QUEDA " + (int)((runningTime/dt) - (t/dt)));
                 sa.writeAnswer(particles, dt2*printCont);
@@ -42,9 +38,8 @@ public class Main {
                 relocationCounterDT = 0;
                 printCont ++;
             }
-
-            calculateForce();
             updateParticles(dt);
+            reinjectParticles();
         }
 
         System.out.println("CAUDAL GLOBAL: " + relocationCounter/runningTime);
@@ -67,15 +62,34 @@ public class Main {
     }
 
     private static void reinjectParticles() {
+
         for (Particle p: particles){
-            if(p.getY() - p.getRadius() < - (SiloData.L / 10)){
-                p.setY(SiloData.L - p.getRadius());
-//                p.setXSpeed(0);
-//                p.setYSpeed(0);
-                relocationCounter ++;
-                relocationCounterDT ++;
+            if(p.getY() - p.getRadius() <= -(SiloData.L / 10)){
+                if(isValid(particles,p)){
+                    System.out.println("ES VALID!!!");
+                    p.setY(SiloData.L - p.getRadius());
+                    p.setXSpeed(0);
+                    p.setYSpeed(0);
+                    relocationCounter ++;
+                    relocationCounterDT ++;
+                }
             }
         }
+    }
+
+    private static boolean isValid(ArrayList<Particle> particles, Particle p) {
+        double aux = p.getY();
+        for (Particle p2: particles){
+            if(p2.equals(p)){ return false; }
+
+            p.setY(SiloData.L - p.getRadius());
+            if(p.getRadius() + p2.getRadius() - p.getDistance(p2) >= 0){
+                p.setY(aux);
+                return false;
+            }
+
+        }
+        return true;
     }
 
     /**
@@ -91,6 +105,8 @@ public class Main {
         calculateForce();
 
         particles.forEach((p) -> correctVelocities(p, delta, oldParticles));
+
+        calculateForce();
 
     }
 

@@ -1,6 +1,5 @@
 package ar.edu.itba.ss;
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -91,16 +90,14 @@ public class Particle {
         }
 
         //BOTTOM WALL
-        e = this.getY() - this.getRadius();;
+        e = this.getY() - this.getRadius();
         if(e < 0){
             if(!isGap()){
                 enx = 0;
                 eny = -1;
                 updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, -1 * e);
-
             }
         }
-
     }
 
     /**
@@ -189,11 +186,11 @@ public class Particle {
     }
 
 
-    public long getId(){
+    long getId(){
         return id;
     }
 
-    public static ArrayList<Particle> generate(double time, double mass) {
+    static ArrayList<Particle> generate(double time, double mass) {
         ArrayList<Particle> particles = new ArrayList<>();
         Random rand = new Random();
 
@@ -240,7 +237,6 @@ public class Particle {
 
         return id == particle.id;
     }
-
 
     @Override
     public int hashCode() {
