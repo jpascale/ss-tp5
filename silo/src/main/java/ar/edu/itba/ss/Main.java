@@ -10,11 +10,11 @@ public class Main {
 
     private static double mass = 0.01;
 
-    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 2;
+    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 4;
     private static double dt2 = 100 * dt;
 
-    private static double runningTime = 1;
-    private static double generationTime = 0.03;
+    private static double runningTime = 2;
+    private static double generationTime = 0.05;
 
     private static boolean WRITE_EXTRAS = false;
 
@@ -66,7 +66,6 @@ public class Main {
         for (Particle p: particles){
             if(p.getY() - p.getRadius() <= -(SiloData.L / 10)){
                 if(isValid(particles,p)){
-                    System.out.println("ES VALID!!!");
                     p.setY(SiloData.L - p.getRadius());
                     p.setXSpeed(0);
                     p.setYSpeed(0);
@@ -83,7 +82,7 @@ public class Main {
             if(p2.equals(p)){ return false; }
 
             p.setY(SiloData.L - p.getRadius());
-            if(p.getRadius() + p2.getRadius() - p.getDistance(p2) >= 0){
+            if(p.getRadius() + p2.getRadius() - p.getDistance(p2) > 0){
                 p.setY(aux);
                 return false;
             }
