@@ -13,11 +13,11 @@ public class Main {
 
     private static double mass = 0.01;
 
-    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 10;
+    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 5;
     private static double dt2 = 100 * dt;
 
     private static double runningTime = 1;
-    private static double generationTime = 0.04;
+    private static double generationTime = 0.03;
 
     private static double maxRad = SiloData.D / 10;
 
@@ -43,8 +43,9 @@ public class Main {
                 relocationCounterDT = 0;
                 printCont ++;
             }
-            updateParticles(dt);
             reinjectParticles();
+            updateParticles(dt);
+
         }
 
         System.out.println("CAUDAL GLOBAL: " + relocationCounter/runningTime);
@@ -63,40 +64,39 @@ public class Main {
             }
             //Updates force with the walls
             p.updateForce();
+
         }
 
     }
 
     private static void reinjectParticles() {
         for (Particle p: particles){
-            if(p.getY() - p.getRadius() <= -(SiloData.L / 10)){
-                if(isValid(particles,p)){
-                    p.setY(SiloData.L);
-                    p.setXSpeed(0);
-                    p.setYSpeed(0);
-                    relocationCounter ++;
-                    relocationCounterDT ++;
-                }
+            int tries = 0;
+            double x,y;
+            if(p.getY() - p.getRadius() <= - (SiloData.L / 10)){
+                do{
+                    x = r.nextDouble() * ((SiloData.W - maxRad) - maxRad) + maxRad;
+                    y = SiloData.L - maxRad +  tries * (SiloData.L / 10) ;
+                    tries ++;
+
+                }while(!isValid(new Particle(p.getId(), p.getRadius(), x, y)));
+                p.setXSpeed(0);
+                p.setYSpeed(0);
+                p.setX(x);
+                p.setY(y);
+                relocationCounter ++;
+                relocationCounterDT ++;
             }
         }
     }
 
-    private static boolean isValid(ArrayList<Particle> particles, Particle p) {
-        double auxY = p.getY();
-        double auxX = p.getX();
 
-        for (Particle p2: particles){
-            if(p2.equals(p)){ return false; }
-            p.setX(r.nextDouble() * ((SiloData.W - maxRad) - maxRad) + maxRad);
-            p.setY(SiloData.L - maxRad);
-            if(p.getRadius() + p2.getRadius() - p.getDistance(p2) > 0){
-                p.setX(auxX);
-                p.setY(auxY);
-                return false;
+        private static boolean isValid(Particle p) {
+            for (Particle p2 : particles) {
+                if ((p.getRadius() + p2.getRadius() - p2.getDistance(p) > 0))
+                    return false;
             }
-
-        }
-        return true;
+            return true;
     }
 
     /**
@@ -136,20 +136,6 @@ public class Main {
         double predYSpeed = p.getYSpeed() + (3.0 / 2.0) * (p.getYForce() / p.getMass()) * delta
                 - (1.0/2.0) * (p.getOldYForce() / p.getMass()) * delta;
 
-
-        if(predXSpeed > 100){
-            predXSpeed = 0.1;
-        }
-        if(predXSpeed < -100){
-            predXSpeed = -0.1;
-        }
-        if(predYSpeed > 100){
-            predYSpeed = 0.1;
-        }
-        if(predYSpeed < -100){
-            predYSpeed = -0.1;
-        }
-
         p.setXSpeed(predXSpeed);
         p.setYSpeed(predYSpeed);
 
@@ -165,19 +151,6 @@ public class Main {
                 + (5.0 / 6.0) * (old.getXForce() / p.getMass()) * delta - (1.0 / 6.0) * (old.getOldXForce() / p.getMass()) * delta;
         double newYSpeed = old.getYSpeed() + (1.0 / 3.0) * (p.getYForce() / p.getMass()) * delta
                 + (5.0 / 6.0) * (old.getYForce() / p.getMass()) * delta - (1.0 / 6.0) * (old.getOldYForce() / p.getMass()) * delta;
-
-        if(newXSpeed > 100){
-            newXSpeed = 0.1;
-        }
-        if(newXSpeed < -100){
-            newXSpeed = -0.1;
-        }
-        if(newYSpeed > 100){
-            newYSpeed = 0.1;
-        }
-        if(newYSpeed < -100){
-            newYSpeed = -0.1;
-        }
 
         p.setXSpeed(newXSpeed);
         p.setYSpeed(newYSpeed);

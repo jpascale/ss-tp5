@@ -33,6 +33,13 @@ public class Particle {
 
     }
 
+    Particle(long id, double radius, double x, double y){
+        this.id = id;
+        this.radius = radius;
+        this.x_pos = x;
+        this.y_pos = y;
+    }
+
     void initializeForce() {
         x_force = 0.0;
         y_force = -SiloData.G * mass;
@@ -91,12 +98,17 @@ public class Particle {
 
         //BOTTOM WALL
         e = this.getY() - this.getRadius();
-        if(e < 0){
-            if(!isGap()){
+        if(this.getY() > 0 && e < 0 && !isGap()) {
                 enx = 0;
                 eny = -1;
                 updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, -1 * e);
-            }
+        }
+
+        e = - SiloData.L / 10 - (this.getY() - this.getRadius());
+        if(this.getY() < 0 && e > 0 && !isGap()) {
+            enx = 0;
+            eny = -1;
+            updateForce(this.getXSpeed(), this.getYSpeed(), enx, eny, e);
         }
     }
 
@@ -185,12 +197,24 @@ public class Particle {
         return radius;
     }
 
+    public void setXForce(double x_force) {
+        this.x_force = x_force;
+    }
+
+    public void setYForce(double y_force) {
+        this.y_force = y_force;
+    }
+
 
     long getId(){
         return id;
     }
 
     static ArrayList<Particle> generate(double time, double mass) {
+        double d;
+        if(SiloData.D == 0){
+            d = 0.2;
+        }
         ArrayList<Particle> particles = new ArrayList<>();
         Random rand = new Random();
 
