@@ -166,6 +166,19 @@ public class Main {
         double newYSpeed = old.getYSpeed() + (1.0 / 3.0) * (p.getYForce() / p.getMass()) * delta
                 + (5.0 / 6.0) * (old.getYForce() / p.getMass()) * delta - (1.0 / 6.0) * (old.getOldYForce() / p.getMass()) * delta;
 
+        if(newXSpeed > 100){
+            newXSpeed = 0.1;
+        }
+        if(newXSpeed < -100){
+            newXSpeed = -0.1;
+        }
+        if(newYSpeed > 100){
+            newYSpeed = 0.1;
+        }
+        if(newYSpeed < -100){
+            newYSpeed = -0.1;
+        }
+
         p.setXSpeed(newXSpeed);
         p.setYSpeed(newYSpeed);
     }
