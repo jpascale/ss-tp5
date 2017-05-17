@@ -2,19 +2,24 @@ package ar.edu.itba.ss;
 
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Main {
     private static SimulationAnswer sa = new SimulationAnswer();
 
     private static ArrayList<Particle> particles;
 
+    private static Random r = new Random();
+
     private static double mass = 0.01;
 
-    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 4;
+    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 10;
     private static double dt2 = 100 * dt;
 
-    private static double runningTime = 2;
-    private static double generationTime = 0.05;
+    private static double runningTime = 1;
+    private static double generationTime = 0.04;
+
+    private static double maxRad = SiloData.D / 10;
 
     private static boolean WRITE_EXTRAS = false;
 
@@ -46,6 +51,7 @@ public class Main {
     }
 
 
+
     private static void calculateForce(){
         for(Particle p: particles){
             p.initializeForce();
@@ -62,11 +68,10 @@ public class Main {
     }
 
     private static void reinjectParticles() {
-
         for (Particle p: particles){
             if(p.getY() - p.getRadius() <= -(SiloData.L / 10)){
                 if(isValid(particles,p)){
-                    p.setY(SiloData.L - p.getRadius());
+                    p.setY(SiloData.L);
                     p.setXSpeed(0);
                     p.setYSpeed(0);
                     relocationCounter ++;
@@ -77,13 +82,16 @@ public class Main {
     }
 
     private static boolean isValid(ArrayList<Particle> particles, Particle p) {
-        double aux = p.getY();
+        double auxY = p.getY();
+        double auxX = p.getX();
+
         for (Particle p2: particles){
             if(p2.equals(p)){ return false; }
-
-            p.setY(SiloData.L - p.getRadius());
+            p.setX(r.nextDouble() * ((SiloData.W - maxRad) - maxRad) + maxRad);
+            p.setY(SiloData.L - maxRad);
             if(p.getRadius() + p2.getRadius() - p.getDistance(p2) > 0){
-                p.setY(aux);
+                p.setX(auxX);
+                p.setY(auxY);
                 return false;
             }
 
@@ -127,6 +135,20 @@ public class Main {
                 - (1.0/2.0) * (p.getOldXForce() / p.getMass()) * delta;
         double predYSpeed = p.getYSpeed() + (3.0 / 2.0) * (p.getYForce() / p.getMass()) * delta
                 - (1.0/2.0) * (p.getOldYForce() / p.getMass()) * delta;
+
+
+        if(predXSpeed > 100){
+            predXSpeed = 0.1;
+        }
+        if(predXSpeed < -100){
+            predXSpeed = -0.1;
+        }
+        if(predYSpeed > 100){
+            predYSpeed = 0.1;
+        }
+        if(predYSpeed < -100){
+            predYSpeed = -0.1;
+        }
 
         p.setXSpeed(predXSpeed);
         p.setYSpeed(predYSpeed);
