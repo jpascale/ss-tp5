@@ -214,7 +214,10 @@ public class Particle {
         double d;
         if(SiloData.D == 0){
             d = 0.2;
+        }else{
+            d = SiloData.D;
         }
+
         ArrayList<Particle> particles = new ArrayList<>();
         Random rand = new Random();
 
@@ -228,7 +231,35 @@ public class Particle {
             do{
                 randomX = SiloData.W * rand.nextDouble();
                 randomY = SiloData.L * rand.nextDouble();
-                randomR = (rand.nextDouble() * (SiloData.D / 5.0 - SiloData.D / 7.0) + SiloData.D / 7.0) / 2.0;
+                randomR = (rand.nextDouble() * (d / 5.0 - d / 7.0) + d / 7.0) / 2.0;
+            }while(!valid(randomX, randomY, particles, SiloData.W, SiloData.L, randomR));
+            particles.add(new Particle(N, randomR, mass, randomX, randomY, 0.0, 0.0));
+
+            N ++;
+        }
+
+        return particles;
+    }
+
+    static ArrayList<Particle> generate(int cant, double mass) {
+        double d;
+        if(SiloData.D == 0){
+            d = 0.2;
+        }else{
+            d = SiloData.D;
+        }
+        ArrayList<Particle> particles = new ArrayList<>();
+        Random rand = new Random();
+
+        int N = 0;
+
+        double randomX, randomY, randomR;
+
+        while(N < cant){
+            do{
+                randomX = SiloData.W * rand.nextDouble();
+                randomY = SiloData.L * rand.nextDouble();
+                randomR = (rand.nextDouble() * (d / 5.0 - d/ 7.0) + d/ 7.0) / 2.0;
             }while(!valid(randomX, randomY, particles, SiloData.W, SiloData.L, randomR));
             particles.add(new Particle(N, randomR, mass, randomX, randomY, 0.0, 0.0));
 

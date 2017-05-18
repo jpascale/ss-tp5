@@ -13,15 +13,17 @@ public class Main {
 
     private static double mass = 0.01;
 
-    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 5;
+    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 7;
     private static double dt2 = 100 * dt;
 
-    private static double runningTime = 1;
-    private static double generationTime = 0.03;
+    public static double numCaudal = 10;
+
+    private static double runningTime = 3;
+    private static double generationTime = 0.05;
 
     private static double maxRad = SiloData.D / 10;
 
-    private static boolean WRITE_EXTRAS = false;
+    private static boolean WRITE_EXTRAS = true;
 
     private static long relocationCounterDT = 0;
     private static long relocationCounter = 0;
@@ -38,10 +40,13 @@ public class Main {
                 sa.writeAnswer(particles, dt2*printCont);
                 if (WRITE_EXTRAS) {
                     sa.writeCinetic(t, getKineticEnergy(particles));
-                    sa.writeReloc(t, relocationCounterDT / dt2);
+                    //sa.writeReloc(t, relocationCounterDT / dt2);
                 }
-                relocationCounterDT = 0;
                 printCont ++;
+            }
+            if(relocationCounterDT == numCaudal){
+                sa.writeReloc(t, relocationCounterDT);
+                relocationCounterDT = 0;
             }
             reinjectParticles();
             updateParticles(dt);
