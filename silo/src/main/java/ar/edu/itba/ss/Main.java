@@ -16,9 +16,9 @@ public class Main {
     private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 7;
     private static double dt2 = 100 * dt;
 
-    public static double numCaudal = 10;
+    private static double numCaudal = 10;
 
-    private static double runningTime = 3;
+    private static double runningTime = 2;
     private static double generationTime = 0.05;
 
     private static double maxRad = SiloData.D / 10;
@@ -29,12 +29,14 @@ public class Main {
     private static long relocationCounter = 0;
 
     public static void main(String[] args) {
-        particles = Particle.generate(generationTime, mass);
+        particles = Particle.generate(400, mass);
+        boolean stationary = false;
 
         System.out.println(particles.size());
         double printCont = 0.0;
+        double t;
 
-        for (double t = 0; t < runningTime; t += dt){
+        for (t = 0; t < runningTime && !stationary; t += dt){
             if (dt2 * printCont <= t){
                 System.out.println("QUEDA " + (int)((runningTime/dt) - (t/dt)));
                 sa.writeAnswer(particles, dt2*printCont);
@@ -44,16 +46,19 @@ public class Main {
                 }
                 printCont ++;
             }
-            if(relocationCounterDT == numCaudal){
-                sa.writeReloc(t, relocationCounterDT);
-                relocationCounterDT = 0;
-            }
-            reinjectParticles();
+//            if(relocationCounterDT == numCaudal){
+//                sa.writeReloc(t, relocationCounterDT);
+//                relocationCounterDT = 0;
+//            }
+            //reinjectParticles();
             updateParticles(dt);
+            if(t > 0.4 && getKineticEnergy(particles) <= 2.00E-04){
+                stationary = true;
+            }
 
         }
-
-        System.out.println("CAUDAL GLOBAL: " + relocationCounter/runningTime);
+        System.out.println(t);
+//        System.out.println("CAUDAL GLOBAL: " + relocationCounter/runningTime);
     }
 
 

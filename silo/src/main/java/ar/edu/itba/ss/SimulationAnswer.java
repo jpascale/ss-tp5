@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class SimulationAnswer {
 
-    public void writeAnswer(ArrayList<Particle> particles, double t){
+    void writeAnswer(ArrayList<Particle> particles, double t){
         StringBuilder sb = new StringBuilder();
         ArrayList<Particle> borderParticle = addBorderParticles();
         sb.append("\t").append(particles.size() + borderParticle.size()).append("\n");
@@ -26,7 +26,7 @@ public class SimulationAnswer {
         }
     }
 
-    public void writeCinetic(double t, double k){
+    void writeCinetic(double t, double k){
         StringBuilder ec = new StringBuilder();
         ec.append(t).append('\t').append(k).append('\n');
 
@@ -39,7 +39,7 @@ public class SimulationAnswer {
         }
     }
 
-    public void writeReloc(double t, double r){
+    void writeReloc(double t, double r){
         StringBuilder reloc = new StringBuilder();
         reloc.append(t).append('\t').append(r).append('\n');
 
