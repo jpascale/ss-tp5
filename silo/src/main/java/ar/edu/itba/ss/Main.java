@@ -160,7 +160,7 @@ public class Main {
         double ek = 0;
 
         for (Particle p: particles){
-            ek += 0.5 * p.getMass() * Math.sqrt(Math.pow(p.getXSpeed(), 2) + Math.pow(p.getYSpeed(), 2));
+            ek += 0.5 * p.getMass() * (Math.pow(p.getXSpeed(), 2) + Math.pow(p.getYSpeed(), 2));
         }
 
         return ek;
