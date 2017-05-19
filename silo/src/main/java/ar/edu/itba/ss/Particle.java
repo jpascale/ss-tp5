@@ -197,15 +197,6 @@ public class Particle {
         return radius;
     }
 
-    public void setXForce(double x_force) {
-        this.x_force = x_force;
-    }
-
-    public void setYForce(double y_force) {
-        this.y_force = y_force;
-    }
-
-
     long getId(){
         return id;
     }

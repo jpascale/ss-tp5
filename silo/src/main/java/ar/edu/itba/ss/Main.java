@@ -13,52 +13,49 @@ public class Main {
 
     private static double mass = 0.01;
 
-    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 7;
+    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 5;
     private static double dt2 = 100 * dt;
 
-    private static double numCaudal = 10;
+    private static double numCaudal = 100;
 
-    private static double runningTime = 2;
+    private static double runningTime = 20;
     private static double generationTime = 0.05;
 
     private static double maxRad = SiloData.D / 10;
 
-    private static boolean WRITE_EXTRAS = true;
+    private static boolean WRITE_EXTRAS = false;
 
     private static long relocationCounterDT = 0;
     private static long relocationCounter = 0;
 
     public static void main(String[] args) {
-        particles = Particle.generate(400, mass);
-        boolean stationary = false;
+        particles = Particle.generate(SiloData.N, mass);
 
         System.out.println(particles.size());
         double printCont = 0.0;
         double t;
+        double lastT = 0;
 
-        for (t = 0; t < runningTime && !stationary; t += dt){
+        for (t = 0; t < runningTime; t += dt){
             if (dt2 * printCont <= t){
-                System.out.println("QUEDA " + (int)((runningTime/dt) - (t/dt)));
-                sa.writeAnswer(particles, dt2*printCont);
-                if (WRITE_EXTRAS) {
-                    sa.writeCinetic(t, getKineticEnergy(particles));
-                    //sa.writeReloc(t, relocationCounterDT / dt2);
-                }
+                System.out.println(t);
+//
+//                sa.writeAnswer(particles, dt2*printCont);
+//                if (WRITE_EXTRAS) {
+//                    sa.writeCinetic(t, getKineticEnergy(particles));
+//                }
                 printCont ++;
             }
-//            if(relocationCounterDT == numCaudal){
-//                sa.writeReloc(t, relocationCounterDT);
-//                relocationCounterDT = 0;
-//            }
-            //reinjectParticles();
+            reinjectParticles();
             updateParticles(dt);
-            if(t > 0.4 && getKineticEnergy(particles) <= 2.00E-04){
-                stationary = true;
+            if(relocationCounterDT == numCaudal){
+                sa.writeReloc(t - lastT, relocationCounterDT);
+                relocationCounterDT = 0;
+                lastT = t;
             }
 
         }
-        System.out.println(t);
-//        System.out.println("CAUDAL GLOBAL: " + relocationCounter/runningTime);
+        System.out.println("CAUDAL GLOBAL: " + relocationCounter/runningTime);
     }
 
 
