@@ -49,7 +49,7 @@ public class Main {
             reinjectParticles();
             updateParticles(dt);
             if(relocationCounterDT == numCaudal){
-                sa.writeReloc(t - lastT, relocationCounterDT);
+                sa.writeReloc(t, relocationCounterDT/(t-lastT));
                 relocationCounterDT = 0;
                 lastT = t;
             }
