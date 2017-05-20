@@ -22,6 +22,8 @@ public class Particle {
     private double old_x_force;
     private double old_y_force;
 
+    private double pressure;
+
     Particle(long id, double radius, double mass, double x, double y, double x_speed, double y_speed){
         this.id = id;
         this.radius = radius;
@@ -43,6 +45,7 @@ public class Particle {
     void initializeForce() {
         x_force = 0.0;
         y_force = -SiloData.G * mass;
+        pressure = 0;
     }
 
     /**
@@ -69,8 +72,17 @@ public class Particle {
         double normalForce = - SiloData.kn * e;
         double tangentForce = - SiloData.kt * e * relativeSpeedT;
 
+        double n_force_x = normalForce * enx;
+        double n_force_y = normalForce * eny;
+
+        this.pressure += Math.sqrt(n_force_x * n_force_x + n_force_y * n_force_y) / getPerimeter();
+
         this.x_force += normalForce * enx + tangentForce * - eny;
         this.y_force += normalForce * eny + tangentForce * enx;
+    }
+
+    private double getPerimeter() {
+        return Math.PI * radius * 2;
     }
 
     /**
@@ -197,6 +209,9 @@ public class Particle {
         return radius;
     }
 
+    double getPressure() { return pressure; }
+
+
     long getId(){
         return id;
     }
@@ -288,4 +303,5 @@ public class Particle {
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
     }
+
 }

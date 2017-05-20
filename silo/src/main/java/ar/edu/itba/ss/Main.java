@@ -13,12 +13,12 @@ public class Main {
 
     private static double mass = 0.01;
 
-    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 5;
+    private static double dt = 0.1 * Math.sqrt(mass / SiloData.kn) / 7;
     private static double dt2 = 100 * dt;
 
     private static double numCaudal = 100;
 
-    private static double runningTime = 20;
+    private static double runningTime = 3;
     private static double generationTime = 0.05;
 
     private static double maxRad = SiloData.D / 10;
@@ -39,11 +39,11 @@ public class Main {
         for (t = 0; t < runningTime; t += dt){
             if (dt2 * printCont <= t){
                 System.out.println(t);
-//
-//                sa.writeAnswer(particles, dt2*printCont);
-//                if (WRITE_EXTRAS) {
-//                    sa.writeCinetic(t, getKineticEnergy(particles));
-//                }
+
+                sa.writeAnswer(particles, dt2*printCont);
+                if (WRITE_EXTRAS) {
+                    sa.writeCinetic(t, getKineticEnergy(particles));
+                }
                 printCont ++;
             }
             reinjectParticles();

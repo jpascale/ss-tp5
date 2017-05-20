@@ -12,10 +12,10 @@ public class SimulationAnswer {
         sb.append("\t").append(particles.size() + borderParticle.size()).append("\n");
         sb.append("\t").append(t).append("\n");
         for(Particle p : borderParticle){
-            sb.append("\t").append(p.getX()).append("\t").append(p.getY()).append("\t").append(p.getRadius()).append("\n");
+            sb.append("\t").append(p.getX()).append("\t").append(p.getY()).append("\t").append(p.getRadius()).append("\t").append(p.getPressure()).append("\n");
         }
         for(Particle p: particles){
-            sb.append("\t").append(p.getX()).append("\t").append(p.getY()).append("\t").append(p.getRadius()).append("\n");
+            sb.append("\t").append(p.getX()).append("\t").append(p.getY()).append("\t").append(p.getRadius()).append("\t").append(p.getPressure()).append("\n");
         }
         try {
             FileWriter fw = new FileWriter("out.txt", true);
